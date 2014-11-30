@@ -28,11 +28,13 @@ func init() {
 }
 
 func main() {
-  //readLine("/Users/ignacymoryc/Dropbox/example-log")
-  readLine("/Users/ignacymoryc/Dropbox/git-commit-logs")
+  if len(os.Args) < 2 {
+    log.Fatal("Usege: loglines PATH_TO_LOGLINES_FILE")
+  }
+  parseLogLines(os.Args[1])
 }
 
-func readLine(path string) {
+func parseLogLines(path string) {
   inFile, err := os.Open(path)
   if err != nil {
     log.Fatal(err)
