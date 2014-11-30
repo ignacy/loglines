@@ -1,0 +1,8 @@
+
+commitlog.go,265
+type LogLine struct {LogLine11,71
+func main() {main18,164
+func readLine(path string) {readLine22,234
+  var waitGroup sync.WaitGroupwaitGroup34,465
+func parseLine(line string) *LogLine {parseLine53,769
+func Display(results chan *LogLine) {Display63,1075

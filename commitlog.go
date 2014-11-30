@@ -2,10 +2,10 @@ package main
 
 import (
   "bufio"
-  "fmt"
   "log"
   "os"
   "regexp"
+  "sync"
 )
 
 type LogLine struct {
@@ -16,7 +16,6 @@ type LogLine struct {
 }
 
 func main() {
-  fmt.Println("HOEM")
   readLine("/Users/ignacymoryc/Dropbox/example-log")
 }
 
@@ -30,9 +29,25 @@ func readLine(path string) {
   scanner := bufio.NewScanner(inFile)
   scanner.Split(bufio.ScanLines)
 
+  results := make(chan *LogLine)
+
+  var waitGroup sync.WaitGroup
+
   for scanner.Scan() {
-    fmt.Printf("\nLog line: %+v", parseLine(scanner.Text()))
+    waitGroup.Add(1)
+    go func(text string, results chan<- *LogLine) {
+      results <- parseLine(text)
+      waitGroup.Done()
+    }(scanner.Text(), results)
+
   }
+
+  go func() {
+    waitGroup.Wait()
+    close(results)
+  }()
+
+  Display(results)
 }
 
 func parseLine(line string) *LogLine {
@@ -43,4 +58,12 @@ func parseLine(line string) *LogLine {
   result_slice := re1.FindAllStringSubmatch(line, -1)
   return &LogLine{result_slice[0][1], result_slice[0][2],
     result_slice[0][3], result_slice[0][4]}
+}
+
+func Display(results chan *LogLine) {
+  // The channel blocks until a result is written to the channel.
+  // Once the channel is closed the for loop terminates.
+  for line := range results {
+    log.Printf("%s:\n%s\n\n", line.Project, line.Message)
+  }
 }
