@@ -23,7 +23,7 @@ func (line *LogLine) hasData() bool {
   return line.Project != "" && line.Message != ""
 }
 
-
+func GetLogLines(path string) {
   inFile, err := os.Open(path)
   if err != nil {
     log.Fatal(err)
