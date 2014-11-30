@@ -16,7 +16,8 @@ type LogLine struct {
 }
 
 func main() {
-  readLine("/Users/ignacymoryc/Dropbox/example-log")
+  //readLine("/Users/ignacymoryc/Dropbox/example-log")
+  readLine("/Users/ignacymoryc/Dropbox/git-commit-logs")
 }
 
 func readLine(path string) {
@@ -56,14 +57,18 @@ func parseLine(line string) *LogLine {
     log.Fatal(err)
   }
   result_slice := re1.FindAllStringSubmatch(line, -1)
-  return &LogLine{result_slice[0][1], result_slice[0][2],
-    result_slice[0][3], result_slice[0][4]}
+  if result_slice == nil {
+    return &LogLine{}
+  } else {
+    return &LogLine{result_slice[0][1], result_slice[0][2],
+      result_slice[0][3], result_slice[0][4]}
+  }
 }
 
 func Display(results chan *LogLine) {
   // The channel blocks until a result is written to the channel.
   // Once the channel is closed the for loop terminates.
   for line := range results {
-    log.Printf("%s:\n%s\n\n", line.Project, line.Message)
+    log.Printf("%s:\n%s\n", line.Project, line.Message)
   }
 }
