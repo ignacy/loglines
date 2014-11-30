@@ -15,6 +15,18 @@ type LogLine struct {
   Message string
 }
 
+func (line LogLine) String() string {
+  return "Project: " + line.Project + " Message: " + line.Message + "\n"
+}
+
+func (line *LogLine) hasData() bool {
+  return line.Project != "" && line.Message != ""
+}
+
+func init() {
+  log.SetFlags(0)
+}
+
 func main() {
   //readLine("/Users/ignacymoryc/Dropbox/example-log")
   readLine("/Users/ignacymoryc/Dropbox/git-commit-logs")
@@ -37,7 +49,9 @@ func readLine(path string) {
   for scanner.Scan() {
     waitGroup.Add(1)
     go func(text string, results chan<- *LogLine) {
-      results <- parseLine(text)
+      if len(text) >= 0 {
+        results <- parseLine(text)
+      }
       waitGroup.Done()
     }(scanner.Text(), results)
 
@@ -56,12 +70,16 @@ func parseLine(line string) *LogLine {
   if err != nil {
     log.Fatal(err)
   }
-  result_slice := re1.FindAllStringSubmatch(line, -1)
-  if result_slice == nil {
-    return &LogLine{}
+
+  if result_slice := re1.FindAllStringSubmatch(line, -1); result_slice != nil {
+    return &LogLine{
+      Project: result_slice[0][1],
+      Hash:    result_slice[0][2],
+      Date:    result_slice[0][3],
+      Message: result_slice[0][4],
+    }
   } else {
-    return &LogLine{result_slice[0][1], result_slice[0][2],
-      result_slice[0][3], result_slice[0][4]}
+    return &LogLine{}
   }
 }
 
@@ -69,6 +87,8 @@ func Display(results chan *LogLine) {
   // The channel blocks until a result is written to the channel.
   // Once the channel is closed the for loop terminates.
   for line := range results {
-    log.Printf("%s:\n%s\n", line.Project, line.Message)
+    if line.hasData() {
+      log.Printf("Line: %s", line)
+    }
   }
 }
