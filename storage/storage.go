@@ -1,4 +1,4 @@
-package main
+package storage
 
 import (
   "bufio"
@@ -23,18 +23,7 @@ func (line *LogLine) hasData() bool {
   return line.Project != "" && line.Message != ""
 }
 
-func init() {
-  log.SetFlags(0)
-}
 
-func main() {
-  if len(os.Args) < 2 {
-    log.Fatal("Usege: loglines PATH_TO_LOGLINES_FILE")
-  }
-  parseLogLines(os.Args[1])
-}
-
-func parseLogLines(path string) {
   inFile, err := os.Open(path)
   if err != nil {
     log.Fatal(err)
