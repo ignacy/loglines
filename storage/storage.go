@@ -8,20 +8,7 @@ import (
   "sync"
 )
 
-type LogLine struct {
-  Project string
-  Hash    string
-  Date    string
-  Message string
-}
-
-func (line LogLine) String() string {
-  return "Project: " + line.Project + " Message: " + line.Message + "\n"
-}
-
-func (line *LogLine) hasData() bool {
-  return line.Project != "" && line.Message != ""
-}
+const LOG_LINE_REGEXP = `([^\s]+)\s([^\s]+)\s(.*0100)\s(.*)`
 
 func GetLogLines(path string) {
   inFile, err := os.Open(path)
@@ -53,11 +40,11 @@ func GetLogLines(path string) {
     close(results)
   }()
 
-  Display(results)
+  display(results)
 }
 
 func parseLine(line string) *LogLine {
-  re1, err := regexp.Compile(`([^\s]+)\s([^\s]+)\s(.*0100)\s(.*)`)
+  re1, err := regexp.Compile(LOG_LINE_REGEXP)
   if err != nil {
     log.Fatal(err)
   }
@@ -74,7 +61,7 @@ func parseLine(line string) *LogLine {
   }
 }
 
-func Display(results chan *LogLine) {
+func display(results chan *LogLine) {
   // The channel blocks until a result is written to the channel.
   // Once the channel is closed the for loop terminates.
   for line := range results {
