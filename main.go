@@ -5,6 +5,8 @@ import (
   "os"
 
   "github.com/ignacy/loglines/storage"
+
+  _ "github.com/ignacy/loglines/types"
 )
 
 func init() {
