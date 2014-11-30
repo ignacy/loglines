@@ -1,0 +1,5 @@
+# Add named capture groups in regexps
+# Add statistics for number of logs per project per day
+# Add graphical representation for statistics
+# Add duplicate handling
+# Maybe? Add persistance so we don't start from the begining every time
