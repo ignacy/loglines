@@ -27,9 +27,7 @@ func GetLogLines(path string) {
   for scanner.Scan() {
     waitGroup.Add(1)
     go func(text string, results chan<- *types.LogLine) {
-      if len(text) >= 0 {
-        results <- parser.ParseLine(text)
-      }
+      results <- parser.ParseLine(text)
       waitGroup.Done()
     }(scanner.Text(), results)
 

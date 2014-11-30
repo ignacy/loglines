@@ -9,10 +9,10 @@ import (
 
 // Logline exaple:
 // regexper b52bc8a Sun Oct 19 19:25:29 2014 +0200 having fun
-const LOG_LINE_REGEXP = `([^\s]+)\s([^\s]+)\s(.*0100)\s(.*)`
+const logLineRegexp = `([^\s]+)\s([^\s]+)\s(.*\+\d{4})\s(.*)`
 
 func ParseLine(line string) *types.LogLine {
-  re1, err := regexp.Compile(LOG_LINE_REGEXP)
+  re1, err := regexp.Compile(logLineRegexp)
   if err != nil {
     log.Fatal(err)
   }
